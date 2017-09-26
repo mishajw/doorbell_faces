@@ -32,11 +32,8 @@ Fields:
 
 ### API methods
 
-For all three objects, there are standard `POST`, `GET`, `POST`, `LIST` and `DELETE` commands. The calls listed here are calls that
-don't follow the standard pattern
-
-#### `doorbell_faces.captures.POST()`
-Add a capture to the database
+#### `doorbell_faces.add_capture()`
+Add a capture to the database and recognise faces
 
 Parameters:
 1) `images`: Sequence of captured images
@@ -44,7 +41,7 @@ Parameters:
 
 Returns a Capture
 
-#### `doorbell_faces.recognitions.LIST()`
+#### `doorbell_faces.list_recognitions()`
 List all recognised faces by time
 
 Parameters:

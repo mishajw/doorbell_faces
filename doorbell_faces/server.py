@@ -12,8 +12,10 @@ def run():
 
 @app.route("/add_capture", methods=["POST"])
 def add_capture():
+    # TODO Return standardised values
     try:
-        return add_capture_handler.add_capture(request, _database)
+        add_capture_handler.add_capture(request, _database)
+        return "success"
     except ValueError as e:
         return wrap_exception(e)
 

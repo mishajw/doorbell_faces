@@ -1,6 +1,5 @@
 from doorbell_faces import database
 from doorbell_faces import exceptions
-import time
 
 
 class ListRecognitionsResult:
@@ -25,12 +24,8 @@ class ListRecognitionsResult:
         })
 
 
-def list_recognitions(request, _database: database.Database):
+def list_recognitions(start_time: int, end_time: int, _database: database.Database):
     # TODO: Paginate
-
-    start_time = request.args.get("start_time", type=int, default=0)
-    end_time = request.args.get("end_time", type=int, default=__get_current_unix_time())
-
     if end_time < start_time:
         raise exceptions.IncorrectValueException.from_value_and_explanation(
             "(start_time, end_time)", (start_time, end_time), "start time must be before end time")
@@ -52,5 +47,3 @@ def list_recognitions(request, _database: database.Database):
     return [ListRecognitionsResult(*result) for result in cursor.fetchall()]
 
 
-def __get_current_unix_time() -> int:
-    return int(time.time() * 1000)

@@ -1,6 +1,7 @@
 from doorbell_faces import database
 from doorbell_faces import face_recognizer
 from typing import List, Optional
+import hashlib
 import logging
 import numpy as np
 
@@ -128,5 +129,5 @@ def __add_recognition_to_database(
     return recognition_id
 
 
-def __hash_numpy_array(a: np.array) -> int:
-    return hash(tuple(a.flatten().tolist()))
+def __hash_numpy_array(a: np.array) -> str:
+    return hashlib.sha1(a.flatten().view(dtype=np.float64)).hexdigest()

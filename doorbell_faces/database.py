@@ -16,7 +16,7 @@ def get_database() -> Database:
       CREATE TABLE IF NOT EXISTS capture (
         capture_id INTEGER PRIMARY KEY,
         time INTEGER,
-        hash INTEGER)
+        hash TEXT)
     """)
 
     database.execute("""

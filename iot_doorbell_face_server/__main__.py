@@ -1,4 +1,4 @@
-from doorbell_faces import server
+from iot_doorbell_face_server import server
 import logging
 import sys
 

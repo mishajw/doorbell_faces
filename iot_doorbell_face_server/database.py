@@ -4,7 +4,7 @@ Database = sqlite3.Connection
 
 
 def get_database() -> Database:
-    database = sqlite3.connect("data/doorbell_faces.db")
+    database = sqlite3.connect("data/iot_doorbell_face_server.db")
 
     database.execute("""
       CREATE TABLE IF NOT EXISTS person (

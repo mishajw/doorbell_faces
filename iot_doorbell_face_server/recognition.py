@@ -1,5 +1,5 @@
-from doorbell_faces import person
-from doorbell_faces import capture
+from iot_doorbell_face_server import person
+from iot_doorbell_face_server import capture
 
 
 class Recognition:

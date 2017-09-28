@@ -1,15 +1,15 @@
-from doorbell_faces import add_capture_handler
-from doorbell_faces import get_capture_handler
-from doorbell_faces import database
-from doorbell_faces import exceptions
-from doorbell_faces import list_recognitions_handler
+from iot_doorbell_face_server import add_capture_handler
+from iot_doorbell_face_server import get_capture_handler
+from iot_doorbell_face_server import database
+from iot_doorbell_face_server import exceptions
+from iot_doorbell_face_server import list_recognitions_handler
 from flask import Flask, request, jsonify, send_file
 import logging
 import time
 
 log = logging.getLogger(__name__)
 
-app = Flask("doorbell_faces")
+app = Flask("iot-doorbell-face-server")
 _database = database.get_database()
 
 

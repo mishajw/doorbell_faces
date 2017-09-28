@@ -1,5 +1,5 @@
-from doorbell_faces import database
-from doorbell_faces import exceptions
+from iot_doorbell_face_server import database
+from iot_doorbell_face_server import exceptions
 
 
 class ListRecognitionsResult:

@@ -1,4 +1,4 @@
-from doorbell_faces import recognition
+from iot_doorbell_face_server import recognition
 from typing import Optional, List
 from flask_restful import Resource
 

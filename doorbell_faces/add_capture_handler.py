@@ -1,16 +1,23 @@
 from doorbell_faces import database
 from doorbell_faces import face_recognizer
 from typing import List, Optional
+import logging
 import numpy as np
+
+log = logging.getLogger(__name__)
 
 
 def add_capture(request, _database: database.Database):
     time = request.args.get("time", type=int)
     image = __get_image(request)
+    log.info("Received image of shape %s and time of %d" % (image.shape, time))
+
     capture_id = __add_capture_to_database(image, time, _database)
     face_embeddings = face_recognizer.recognize_face(image)
     __add_faces_to_database(face_embeddings, capture_id, _database)
     _database.commit()
+
+    log.info("Added all %d recognitions to database" % len(face_embeddings))
 
 
 def __get_image(request) -> np.array:
@@ -88,11 +95,15 @@ def __add_capture_to_database(image: np.array, time: int, _database: database.Da
         """,
         (time, __hash_numpy_array(image)))
 
-    return cursor.lastrowid
+    capture_id = cursor.lastrowid
+
+    log.info("Added capture to database with ID %d" % capture_id)
+
+    return capture_id
 
 
 def __add_recognition_to_database(
-        person_id: Optional[int], capture_id: int, face_embedding: np.array, _database: database.Database):
+        person_id: Optional[int], capture_id: int, face_embedding: np.array, _database: database.Database) -> int:
 
     cursor = _database.cursor()
 
@@ -101,6 +112,7 @@ def __add_recognition_to_database(
           INSERT INTO person (name) VALUES (NULL)
         """)
         person_id = cursor.lastrowid
+        log.info("Added new person to database with ID %d" % person_id)
 
     cursor.execute(
         """
@@ -108,6 +120,12 @@ def __add_recognition_to_database(
           VALUES (?, ?, ?)
         """,
         (person_id, capture_id, face_embedding.tobytes()))
+
+    recognition_id = cursor.lastrowid
+
+    log.info("Added new recognition to database with ID %d" % recognition_id)
+
+    return recognition_id
 
 
 def __hash_numpy_array(a: np.array) -> int:

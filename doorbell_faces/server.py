@@ -1,6 +1,7 @@
 from doorbell_faces import add_capture_handler
 from doorbell_faces import database
 from doorbell_faces import exceptions
+from doorbell_faces import list_recognitions_handler
 from flask import Flask, request, jsonify
 import logging
 
@@ -23,6 +24,14 @@ def add_capture():
 
     # TODO Return correct value
     return "success"
+
+
+@app.route("/list_recognitions", methods=["GET"])
+def list_recognitions():
+    log.info("list_recognitions called")
+
+    # TODO Check if generic .to_json handler in Flask
+    return jsonify([result.to_json() for result in list_recognitions_handler.list_recognitions(request, _database)])
 
 
 @app.errorhandler(exceptions.ServerException)

@@ -10,9 +10,9 @@ app = Flask("doorbell_faces")
 _database = database.get_database()
 
 
-def run():
+def run(port: int):
     log.info("Starting server")
-    app.run(port=12612)
+    app.run(port=port)
 
 
 @app.route("/add_capture", methods=["POST"])

@@ -5,7 +5,7 @@ import sys
 
 def main():
     logging.basicConfig(stream=sys.stdout, level=logging.INFO)
-    doorbell_faces.server.run()
+    doorbell_faces.server.run(port=12612)
 
 
 if __name__ == "__main__":

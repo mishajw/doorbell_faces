@@ -1,8 +1,9 @@
 from doorbell_faces import add_capture_handler
+from doorbell_faces import get_capture_handler
 from doorbell_faces import database
 from doorbell_faces import exceptions
 from doorbell_faces import list_recognitions_handler
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 import logging
 import time
 
@@ -43,6 +44,23 @@ def list_recognitions():
 
     # TODO Check if generic .to_json handler in Flask
     return jsonify([result.to_json() for result in results])
+
+
+@app.route("/get_capture", methods=["GET"])
+def get_capture():
+    log.info("get_capture called")
+
+    capture_hash = request.args.get("capture_hash", type=str, default=None)
+    capture_id = request.args.get("capture_id", type=int, default=None)
+
+    if capture_hash is not None:
+        capture_image_path = get_capture_handler.get_capture_from_hash(capture_hash, _database)
+    elif capture_id is not None:
+        capture_image_path = get_capture_handler.get_capture_from_id(capture_id, _database)
+    else:
+        raise exceptions.IncorrectValueException.from_message("One of \"capture_hash\" or \"capture_id\" must be set")
+
+    return send_file(capture_image_path)
 
 
 @app.errorhandler(exceptions.ServerException)

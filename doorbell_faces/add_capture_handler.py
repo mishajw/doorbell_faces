@@ -1,4 +1,5 @@
 from doorbell_faces import database
+from doorbell_faces import exceptions
 from doorbell_faces import face_recognizer
 from typing import List, Optional
 import hashlib
@@ -26,12 +27,13 @@ def __get_image(request) -> np.array:
     image_rows = request.args.get("image_rows", type=int, default=1080)
 
     if "file" not in request.files:
-        raise ValueError("Couldn't find \"file\" in %s" % list(request.files.keys()))
+        raise exceptions.IncorrectValueException.from_value_and_explanation(
+            "files", list(request.files), "doesn't contain  \"file\"")
 
     file = request.files["file"]
 
     if file.filename == "":
-        raise ValueError("Uploaded file has no name")
+        raise exceptions.IncorrectValueException.from_value_and_explanation("file.filename", file.filename, "is empty")
 
     return __load_file_from_stream(file.stream, image_columns, image_rows)
 
@@ -41,7 +43,7 @@ def __load_file_from_stream(stream, image_columns, image_rows) -> np.array:
 
     expected_data_size = image_columns * image_rows * 3
     if len(file_bytes) != expected_data_size:
-        raise ValueError(
+        raise exceptions.IncorrectValueException.from_message(
             "Uploaded file is incorrect size, should be 1080p RGB raw data (%d bytes) and got %d bytes"
             % (expected_data_size, len(file_bytes)))
 

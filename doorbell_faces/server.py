@@ -1,6 +1,7 @@
 from doorbell_faces import add_capture_handler
 from doorbell_faces import database
-from flask import Flask, request
+from doorbell_faces import exceptions
+from flask import Flask, request, jsonify
 import logging
 
 log = logging.getLogger(__name__)
@@ -22,11 +23,5 @@ def add_capture():
     try:
         add_capture_handler.add_capture(request, _database)
         return "success"
-    except ValueError as e:
-        return wrap_exception(e)
-
-
-def wrap_exception(exception: Exception):
-    return str({
-        "error": str(exception)
-    })
+    except exceptions.ServerException as server_exception:
+        return jsonify(server_exception.to_json()), server_exception.status_code

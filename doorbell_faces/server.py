@@ -69,6 +69,11 @@ def server_exception_handler(server_exception: exceptions.ServerException):
     return jsonify(server_exception.to_json()), server_exception.status_code
 
 
+@app.errorhandler(NotImplementedError)
+def not_implemented_error_handler(_: NotImplementedError):
+    return "Functionality not implemented", 500
+
+
 def __get_file_stream():
     if "file" not in request.files:
         raise exceptions.IncorrectValueException.from_value_and_explanation(

@@ -1,11 +1,24 @@
-from flask import Flask
-from flask_restful import Api
-from doorbell_faces import person
+from doorbell_faces import add_capture_handler
+from doorbell_faces import database
+from flask import Flask, request
+
+app = Flask("doorbell_faces")
+_database = database.get_database()
 
 
 def run():
-    flask_app = Flask("doorbell_faces")
-    flask_api = Api(flask_app)
-    flask_api.add_resource(person.PersonResource(), "/person")
+    app.run(port=12612)
 
-    flask_app.run(port=12612)
+
+@app.route("/add_capture", methods=["POST"])
+def add_capture():
+    try:
+        return add_capture_handler.add_capture(request, _database)
+    except ValueError as e:
+        return wrap_exception(e)
+
+
+def wrap_exception(exception: Exception):
+    return str({
+        "error": str(exception)
+    })

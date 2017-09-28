@@ -1,7 +1,7 @@
 from collections import namedtuple
-from doorbell_faces import capture
 from typing import List
 import cv2
+import numpy as np
 
 
 # Used to detect faces
@@ -12,13 +12,11 @@ __face_cascade = None
 DetectedFace = namedtuple("DetectedFace", ["x", "y", "width", "height"])
 
 
-def detect_faces(_capture: capture.Capture) -> List[DetectedFace]:
+def detect_faces(image: np.array) -> List[DetectedFace]:
     # Create the face cascade if it hasn't been created before
     global __face_cascade
     if __face_cascade is None:
         __face_cascade = cv2.CascadeClassifier(__FACE_CASCADE_FILE)
-
-    image = _capture.get_image()
 
     # Detect faces in image
     faces = __face_cascade.detectMultiScale(

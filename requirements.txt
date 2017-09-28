@@ -1,4 +1,4 @@
+face_recognition
 requests
 flask
 numpy
-opencv_python==3.3.0.10

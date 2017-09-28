@@ -1,5 +1,4 @@
-from doorbell_faces import face_detection
-from doorbell_faces import face_recognition
+from doorbell_faces import face_recognizer
 from doorbell_faces import database
 import numpy as np
 
@@ -7,10 +6,8 @@ import numpy as np
 def add_capture(request, _database: database.Database):
     time = request.args.get("time", type=int)
     image = __get_image(request)
-    faces = face_detection.detect_faces(image)
-    face_images = [image[face.x:face.x + face.width, face.y:face.y + face.height, :] for face in faces]
-    face_vectors = [face_recognition.recognize_face(face_image) for face_image in face_images]
-    __add_faces_to_database(time, face_vectors, _database)
+    face_embeddings = face_recognizer.recognize_face(image)
+    __add_faces_to_database(time, face_embeddings, _database)
 
 
 def __get_image(request) -> np.array:

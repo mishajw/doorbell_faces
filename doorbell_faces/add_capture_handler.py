@@ -5,8 +5,12 @@ from typing import List, Optional
 import hashlib
 import logging
 import numpy as np
+import os
 
 log = logging.getLogger(__name__)
+
+
+CAPTURE_DIRECTORY = "data/capture"
 
 
 def add_capture(request, _database: database.Database):
@@ -92,13 +96,29 @@ def __add_faces_to_database(new_face_embeddings: List[np.array], capture_id: int
 def __add_capture_to_database(image: np.array, time: int, _database: database.Database) -> int:
     cursor = _database.cursor()
 
+    capture_hash = __hash_numpy_array(image)
+
     cursor.execute(
         """
           INSERT INTO capture (time, hash) VALUES (?, ?)
         """,
-        (time, __hash_numpy_array(image)))
+        (time, capture_hash))
 
     capture_id = cursor.lastrowid
+
+    # TODO: Write as standard compressed file rather than numpy format
+    if not os.path.isdir(CAPTURE_DIRECTORY):
+        try:
+            os.mkdir(CAPTURE_DIRECTORY)
+        except OSError as e:
+            log.exception("Error when trying to write make directory %s" % CAPTURE_DIRECTORY, e)
+
+    capture_output_path = os.path.join(CAPTURE_DIRECTORY, capture_hash)
+
+    try:
+        np.save(capture_output_path, image)
+    except OSError as e:
+        log.exception("Error when trying to write capture to %s" % capture_output_path, e)
 
     log.info("Added capture to database with ID %d" % capture_id)
 

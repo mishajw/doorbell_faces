@@ -16,4 +16,4 @@ def get_capture_from_hash(capture_hash: str, _database: database.Database) -> st
 
 
 def get_capture_from_id(capture_id: int, _database: database.Database) -> str:
-    raise NotImplementedError()  # TODO
+    raise exceptions.UnimplementedException()  # TODO

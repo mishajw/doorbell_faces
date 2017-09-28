@@ -25,3 +25,8 @@ class IncorrectValueException(ServerException):
     @classmethod
     def from_value_and_explanation(cls, value_name: str, given_value: Any, explanation: Optional[str]):
         return cls("User provided \"%s\"=\"%s\", incorrect because %s" % (value_name, given_value, explanation))
+
+
+class UnimplementedException(ServerException):
+    def __init__(self):
+        super().__init__(500, "This functionality is unimplemented")

@@ -2,11 +2,9 @@ from iot_doorbell_face_server import database
 from iot_doorbell_face_server import exceptions
 import os
 
-CAPTURE_DIRECTORY = "data/capture"
 
-
-def get_capture_from_hash(capture_hash: str, _database: database.Database) -> str:
-    capture_path = os.path.abspath(os.path.join(CAPTURE_DIRECTORY, "%s.npy" % capture_hash))
+def get_capture_from_hash(capture_hash: str, capture_directory: str, _database: database.Database) -> str:
+    capture_path = os.path.abspath(os.path.join(capture_directory, "%s.npy" % capture_hash))
 
     if not os.path.isfile(capture_path):
         raise exceptions.IncorrectValueException.from_value_and_explanation(
@@ -15,5 +13,5 @@ def get_capture_from_hash(capture_hash: str, _database: database.Database) -> st
     return capture_path
 
 
-def get_capture_from_id(capture_id: int, _database: database.Database) -> str:
+def get_capture_from_id(capture_id: int, capture_directory: str, _database: database.Database) -> str:
     raise exceptions.UnimplementedException()  # TODO

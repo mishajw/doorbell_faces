@@ -10,14 +10,18 @@ import os
 log = logging.getLogger(__name__)
 
 
-CAPTURE_DIRECTORY = "data/capture"
+def add_capture(
+        time: int,
+        image_width: int,
+        image_height: int,
+        image_stream,
+        capture_directory: str,
+        _database: database.Database):
 
-
-def add_capture(time, image_width, image_height, image_stream, _database: database.Database):
     image = __load_file_from_stream(image_stream, image_width, image_height)
     log.info("Received image of shape %s and time of %d" % (image.shape, time))
 
-    capture_id = __add_capture_to_database(image, time, _database)
+    capture_id = __add_capture_to_database(image, time, capture_directory, _database)
     face_embeddings = face_recognizer.recognize_face(image)
     __add_faces_to_database(face_embeddings, capture_id, _database)
     _database.commit()
@@ -76,7 +80,7 @@ def __add_faces_to_database(new_face_embeddings: List[np.array], capture_id: int
         __add_recognition_to_database(closest_person_id, capture_id, new_face_embedding, _database)
 
 
-def __add_capture_to_database(image: np.array, time: int, _database: database.Database) -> int:
+def __add_capture_to_database(image: np.array, time: int, capture_directory: str, _database: database.Database) -> int:
     cursor = _database.cursor()
 
     capture_hash = __hash_numpy_array(image)
@@ -90,13 +94,13 @@ def __add_capture_to_database(image: np.array, time: int, _database: database.Da
     capture_id = cursor.lastrowid
 
     # TODO: Write as standard compressed file rather than numpy format
-    if not os.path.isdir(CAPTURE_DIRECTORY):
+    if not os.path.isdir(capture_directory):
         try:
-            os.mkdir(CAPTURE_DIRECTORY)
+            os.mkdir(capture_directory)
         except OSError as e:
-            log.exception("Error when trying to write make directory %s" % CAPTURE_DIRECTORY, e)
+            log.exception("Error when trying to write make directory %s" % capture_directory, e)
 
-    capture_output_path = os.path.join(CAPTURE_DIRECTORY, capture_hash)
+    capture_output_path = os.path.join(capture_directory, capture_hash)
 
     try:
         np.save(capture_output_path, image)

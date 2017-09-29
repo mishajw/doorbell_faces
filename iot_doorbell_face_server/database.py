@@ -3,8 +3,8 @@ import sqlite3
 Database = sqlite3.Connection
 
 
-def get_database() -> Database:
-    database = sqlite3.connect("data/iot_doorbell_face_server.db")
+def get_database(database_file_path: str) -> Database:
+    database = sqlite3.connect(database_file_path)
 
     database.execute("""
       CREATE TABLE IF NOT EXISTS person (

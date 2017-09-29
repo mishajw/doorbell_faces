@@ -11,14 +11,16 @@ import time
 log = logging.getLogger(__name__)
 
 
-def run(port: int):
+def run(port: int, database_file_path: str, capture_path):
     log.info("Connecting to database")
-    _database = database.get_database()
+    _database = database.get_database(database_file_path)
 
     log.info("Starting server")
     app = Flask("iot-doorbell-face-server")
-    app.add_url_rule("/add_capture", view_func=AddCaptureView.as_view("add_capture", _database), methods=["POST"])
-    app.add_url_rule("/list_recognitions", view_func=ListRecognitionsView.as_view("list_recognitions", _database))
+    app.add_url_rule(
+        "/add_capture", view_func=AddCaptureView.as_view("add_capture", capture_path, _database), methods=["POST"])
+    app.add_url_rule(
+        "/list_recognitions", view_func=ListRecognitionsView.as_view("list_recognitions", capture_path, _database))
     app.add_url_rule("/get_capture", view_func=GetCaptureView.as_view("get_capture", _database))
     app.errorhandler(exceptions.ServerException)(server_exception_handler)
     app.run(port=port)
@@ -27,7 +29,8 @@ def run(port: int):
 class AddCaptureView(View):
     methods = ["POST"]
 
-    def __init__(self, _database: database.Database):
+    def __init__(self, capture_directory: str, _database: database.Database):
+        self.capture_directory = capture_directory
         self.database = _database
 
     def dispatch_request(self):
@@ -38,7 +41,8 @@ class AddCaptureView(View):
         image_height = request.args.get("image_rows", type=int, default=1080)
         image_stream = get_file_stream()
 
-        add_capture_handler.add_capture(_time, image_width, image_height, image_stream, self.database)
+        add_capture_handler.add_capture(
+            _time, image_width, image_height, image_stream, self.capture_directory, self.database)
 
         # TODO Return correct value
         return "success"
@@ -65,7 +69,8 @@ class ListRecognitionsView(View):
 class GetCaptureView(View):
     methods = ["GET"]
 
-    def __init__(self, _database: database.Database):
+    def __init__(self, capture_directory: str, _database: database.Database):
+        self.capture_directory = capture_directory
         self.database = _database
 
     def dispatch_request(self):
@@ -75,9 +80,11 @@ class GetCaptureView(View):
         capture_id = request.args.get("capture_id", type=int, default=None)
 
         if capture_hash is not None:
-            capture_image_path = get_capture_handler.get_capture_from_hash(capture_hash, self.database)
+            capture_image_path = get_capture_handler.get_capture_from_hash(
+                capture_hash, self.capture_directory, self.database)
         elif capture_id is not None:
-            capture_image_path = get_capture_handler.get_capture_from_id(capture_id, self.database)
+            capture_image_path = get_capture_handler.get_capture_from_id(
+                capture_id, self.capture_directory, self.database)
         else:
             raise exceptions.IncorrectValueException.from_message(
                 "One of \"capture_hash\" or \"capture_id\" must be set")

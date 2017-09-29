@@ -41,6 +41,7 @@ def list_recognitions(start_time: int, end_time: int, _database: database.Databa
             recognition.capture_id = capture.capture_id AND
             capture.time > ? AND
             capture.time < ?
+          ORDER BY capture.time ASC
         """,
         (start_time, end_time))
 

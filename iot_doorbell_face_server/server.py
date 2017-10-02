@@ -23,7 +23,7 @@ def run(port: int, database_file_path: str, capture_path):
         "/list_recognitions", view_func=ListRecognitionsView.as_view("list_recognitions", _database))
     app.add_url_rule("/get_capture", view_func=GetCaptureView.as_view("get_capture", _database))
     app.errorhandler(exceptions.ServerException)(server_exception_handler)
-    app.run(port=port)
+    app.run(host="0.0.0.0", port=port)
 
 
 class AddCaptureView(View):

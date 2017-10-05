@@ -1,4 +1,4 @@
-from iot_doorbell_face_server import server
+from face_server import server
 import configargparse
 import logging
 import sys
@@ -7,11 +7,11 @@ import sys
 if __name__ == "__main__":
     logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
-    parser = configargparse.ArgParser("iot-doorbell-face-server")
+    parser = configargparse.ArgParser("face-server")
     parser.add_argument(
         "-c",
         "--config",
-        default="iot-doorbell-face-server.ini",
+        default="face-server.ini",
         help="Configuration file for server",
         is_config_file=True,
         env_var="CONFIG")

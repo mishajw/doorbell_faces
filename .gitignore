@@ -2,4 +2,4 @@
 .idea
 __pycache__
 data
-iot-doorbell-face-server.ini
+face-server.ini

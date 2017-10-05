@@ -1,4 +1,4 @@
-from iot_doorbell_face_server import recognition
+from face_server import recognition
 from typing import Optional, List
 
 

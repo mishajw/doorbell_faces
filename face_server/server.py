@@ -1,8 +1,8 @@
-from iot_doorbell_face_server import add_capture_handler
-from iot_doorbell_face_server import get_capture_handler
-from iot_doorbell_face_server import database
-from iot_doorbell_face_server import exceptions
-from iot_doorbell_face_server import list_recognitions_handler
+from face_server import add_capture_handler
+from face_server import get_capture_handler
+from face_server import database
+from face_server import exceptions
+from face_server import list_recognitions_handler
 from flask import Flask, request, jsonify, send_file
 from flask.views import View
 import logging
@@ -16,7 +16,7 @@ def run(port: int, database_file_path: str, capture_path):
     _database = database.get_database(database_file_path)
 
     log.info("Starting server")
-    app = Flask("iot-doorbell-face-server")
+    app = Flask("face-server")
     app.add_url_rule(
         "/add_capture", view_func=AddCaptureView.as_view("add_capture", capture_path, _database), methods=["POST"])
     app.add_url_rule(

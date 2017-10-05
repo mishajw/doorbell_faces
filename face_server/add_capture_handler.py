@@ -1,6 +1,6 @@
-from iot_doorbell_face_server import database
-from iot_doorbell_face_server import exceptions
-from iot_doorbell_face_server import face_recognizer
+from face_server import database
+from face_server import exceptions
+from face_server import face_recognizer
 from typing import List, Optional
 import hashlib
 import logging
